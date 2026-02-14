@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <title>NTPU 課程排版優化 - 設定</title>
+  <style>
+    body{ font-family: system-ui, "Noto Sans TC", sans-serif; padding: 20px; }
+    label{ display:block; margin: 12px 0 6px; }
+    input[type="number"]{ width: 120px; }
+    .row{ display:flex; gap:12px; align-items:center; }
+  </style>
+</head>
+<body>
+  <h1>設定</h1>
+
+  <label>內容最大寬度（px）</label>
+  <div class="row">
+    <input id="maxWidth" type="number" min="800" max="1600" step="20">
+  </div>
+
+  <label><input id="hideLeftFrame" type="checkbox"> 預設隱藏左側導覽（frames）</label>
+  <label><input id="wrapLongText" type="checkbox"> 課名/備註長字允許換行</label>
+  <label><input id="stickyHeader" type="checkbox"> 表頭置頂</label>
+  <label><input id="zebra" type="checkbox"> 斑馬紋列</label>
+  <label><input id="hideHomeRight" type="checkbox"> 首頁預設隱藏右側連結欄</label>
+
+  <label><input id="highlightHover" type="checkbox"> 滑鼠懸停高亮</label>
+
+  <p>
+    <button id="save">儲存</button>
+    <span id="status" style="margin-left:8px;"></span>
+  </p>
+
+  <script src="options.js"></script>
+</body>
+</html>

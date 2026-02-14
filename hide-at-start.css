@@ -1,0 +1,4 @@
+/* hide-at-start.css */
+.example {
+  visibility: hidden !important;
+}

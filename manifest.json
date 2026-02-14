@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "NTPU Course Layout Optimizer",
+  "version": "1.0.0",
+  "description": "優化北大課程查詢網站的版面與表格可讀性。",
+  "permissions": ["storage","activeTab"],
+  "options_page": "options.html",
+  "content_scripts": [
+    {
+      "matches": ["*://sea.cc.ntpu.edu.tw/pls/dev_stud/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ]
+}
