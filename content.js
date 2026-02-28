@@ -169,58 +169,36 @@ function transformTableToCards(tableEl) {
     const abovelimit = cols[14]?.innerText.trim() == "是";
     const pluslimit =
       cols[15]?.innerText.trim() == "-" ? "0" : cols[15]?.innerText.trim();
-    let limitDept = "";
-    let limitOther = "";
-    let limitTotal = "";
-    let enrolledDept = "";
-    let enrolledOther = "";
-    let enrolledTotal = "";
-    let approvedTotal = "";
-    let pendingTotal = "";
-
-    limitDept = cols[16]?.innerText.trim() || "";
-    limitOther = cols[17]?.innerText.trim() || "";
-    limitTotal = cols[18]?.innerText.trim() || "";
-    enrolledDept = cols[19]?.innerText.trim() || "";
-    enrolledOther = cols[20]?.innerText.trim() || "";
-    enrolledTotal = cols[21]?.innerText.trim() || "";
-    approvedTotal = cols[22]?.innerText.trim() || "";
-    pendingTotal = cols[23]?.innerText.trim() || "";
-
+    const limitTotal    = cols[16]?.innerText.trim() || ""; // 限修總計人數
+    const selectedTotal = cols[17]?.innerText.trim() || ""; // 已選總計人數
+    const approvedTotal = cols[18]?.innerText.trim() || ""; // 已核准人數
+    const pendingTotal  = cols[19]?.innerText.trim() || ""; // 待分發人數
     const signHTML = abovelimit
       ? `<span class="info-card green"><b>加簽</b>：限${pluslimit}人</span>`
       : `<span class="info-card typical">不可加簽</span>`;
+
     const teacherHTMLSafe = teacherHTML || "";
-    const gradeHTMLSafe = gradeHTML;
+    const gradeHTMLSafe = gradeHTML || "";
     const restrictHTMLSafe = restrictHTML || "";
 
-    const formatGroupLine = (label, dept, other, total) => {
-      const items = [];
-      if (dept !== "") items.push(`<span class="count-item">本系 ${dept}</span>`);
-      if (other !== "")
-        items.push(`<span class="count-item">外系 ${other}</span>`);
-      const totalItem =
-        total !== "" ? `<span class="count-total">總計 ${total}</span>` : "";
-      if (!items.length && !totalItem) return "";
-      return `<div class="count-line"><span class="count-label">${label}</span>${items.join("")}${totalItem}</div>`;
-    };
-
-    const formatSingleLine = (label, value) => {
+    const statCard = (label, value, type = "") => {
       if (value === "") return "";
-      return `<div class="count-line"><span class="count-label">${label}</span><span class="count-total">${value}</span></div>`;
+      return `
+        <div class="info-card ${type}">
+          ${label}：${value}
+        </div>
+      `;
     };
-
-    const countLines = [];
-    countLines.push(formatGroupLine("限修", limitDept, limitOther, limitTotal));
-    countLines.push(
-      formatGroupLine("已選", enrolledDept, enrolledOther, enrolledTotal)
-    );
-    countLines.push(formatSingleLine("已核准", approvedTotal));
-    countLines.push(formatSingleLine("待分發", pendingTotal));
-    
-    const countsHTML =
-      countLines.filter(Boolean).join("") ||
-      `<div class="count-line count-empty">人數資訊：無</div>`;
+    if (parseInt(approvedTotal) >= parseInt(limitTotal)) cardColor = "red" 
+    else cardColor="typical"
+    const countsHTML = `<div class="info-card-container">
+        ${statCard("限修", limitTotal, cardColor)}
+        ${statCard("已核准", approvedTotal, cardColor)}
+        </div><div class="info-card-container">
+        ${statCard("已選", selectedTotal, "typical")}
+        ${statCard("待分發", pendingTotal, "typical")}
+        </div>
+    `;
 
 
     // 供排序用的欄位（都存成容易比較的值）
@@ -275,9 +253,7 @@ function transformTableToCards(tableEl) {
           </div>
         </div>
         <div class="course-right">
-          <div class="course-counts">
             ${countsHTML}
-          </div>
         </div>
       </div>
     `;
