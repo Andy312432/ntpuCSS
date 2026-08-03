@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NTPU 新版課程查詢</title>
+  <link rel="stylesheet" href="search.css?v=1.3.2">
+</head>
+<body>
+  <header class="search-header">
+    <div>
+      <p class="eyebrow">NTPU Course Layout Optimizer</p>
+      <h1>新版課程查詢</h1>
+      <p>把原本分散的條件集中在一頁，結果可直接加入試排課。</p>
+    </div>
+    <nav class="header-actions" aria-label="相關功能">
+      <button id="openPlanner" type="button" class="secondary-button">檢視試排課</button>
+      <a href="https://sea.cc.ntpu.edu.tw/pls/dev_stud/course_query_all.chi_main" target="_blank" rel="noopener">開啟官方查詢</a>
+    </nav>
+  </header>
+
+  <main class="search-layout">
+    <aside class="filter-panel">
+      <form id="queryForm">
+        <section class="filter-section">
+          <div class="section-title">
+            <span>1</span>
+            <h2>學期與學制</h2>
+          </div>
+          <div class="field-grid two-columns">
+            <label>學年度<select id="academicYear" required></select></label>
+            <label>學期<select id="term"><option value="1">第 1 學期</option><option value="2">第 2 學期</option></select></label>
+          </div>
+          <label>學制
+            <select id="education">
+              <option value="U">學士班</option>
+              <option value="N">進修學士班</option>
+              <option value="M">碩博士班</option>
+              <option value="P">碩士在職專班</option>
+            </select>
+          </label>
+          <label>查詢類型
+            <select id="queryMode">
+              <option value="all">全校課程</option>
+              <option value="required">必／選修課程</option>
+              <option value="language">外語授課課程</option>
+              <option value="general">通識課程</option>
+              <option value="physical">體育課程</option>
+              <option value="summer">暑修課程</option>
+            </select>
+          </label>
+          <label id="requirementKindField" class="mode-field" hidden>必選修類型
+            <select id="requirementKind"><option value="必選修">必修與選修</option><option value="必修">只看必修</option><option value="選修">只看選修</option></select>
+          </label>
+          <label id="languageField" class="mode-field" hidden>授課語言
+            <select id="language"><option value="1">英語</option><option value="2">日語</option><option value="3">德語</option></select>
+          </label>
+          <label id="generalCategoryField" class="mode-field" hidden>通識類型
+            <select id="generalCategory"><option value="GU18">通識教育中心</option><option value="GU31">語文通識</option><option value="GU23">中山學說與當代思潮</option><option value="GU27">中華民國憲法</option><option value="GU32">微型通識</option><option value="P08">進修學士班通識</option></select>
+          </label>
+          <label id="physicalEducationField" class="mode-field" hidden>體育學制
+            <select id="physicalEducation"><option value="GU20">學士班</option><option value="P06">進修學士班</option></select>
+          </label>
+        </section>
+
+        <section id="unitFilterSection" class="filter-section">
+          <div class="section-title"><span>2</span><h2 id="unitFilterTitle">開課單位</h2></div>
+          <label>學院<select id="college"><option value="">全部學院</option></select></label>
+          <label>系所<select id="department"><option value="">全部系所</option></select></label>
+          <div class="field-grid two-columns">
+            <label>年級<select id="grade"><option value="">全部</option><option value="1">1 年級</option><option value="2">2 年級</option><option value="3">3 年級</option><option value="4">4 年級</option><option value="5">5 年級</option></select></label>
+            <label>班別<select id="className"><option value="">全部</option><option value="A">A 班</option><option value="B">B 班</option><option value="C">C 班</option><option value="D">D 班</option><option value="E">E 班</option></select></label>
+          </div>
+        </section>
+
+        <section class="filter-section">
+          <div class="section-title"><span>3</span><h2>課程關鍵字</h2></div>
+          <label>跨欄位搜尋<input id="courseKeyword" type="search" placeholder="流水號、課名、教師、系所或備註" autocomplete="off"></label>
+          <p class="field-hint">同一欄位會搜尋所有課程資料；可用空格組合條件，例如「資料 王」。</p>
+        </section>
+
+        <section class="filter-section">
+          <div class="section-title"><span>4</span><h2>時間與限制</h2></div>
+          <label>星期<select id="weekday"><option value="">不限</option><option value="1">星期一</option><option value="2">星期二</option><option value="3">星期三</option><option value="4">星期四</option><option value="5">星期五</option><option value="6">星期六</option><option value="7">星期日</option></select></label>
+          <div class="field-grid two-columns">
+            <label>起始節次<select id="startPeriod"></select></label>
+            <label>結束節次<select id="endPeriod"></select></label>
+          </div>
+          <label class="check-row"><input id="onlyRestricted" type="checkbox">只看有修課限制</label>
+          <label class="check-row"><input id="onlyEighteenWeeks" type="checkbox">只看維持 18 週課程</label>
+        </section>
+
+        <div class="form-actions">
+          <button id="submitQuery" type="submit" class="primary-button">查詢課程</button>
+          <button id="resetQuery" type="button" class="text-button">清除條件</button>
+        </div>
+      </form>
+    </aside>
+
+    <section class="results-panel" aria-labelledby="resultsTitle">
+      <div class="results-heading">
+        <div>
+          <p class="eyebrow">SEARCH RESULTS</p>
+          <h2 id="resultsTitle">查詢結果</h2>
+          <p id="resultSummary">選擇條件後開始查詢。</p>
+        </div>
+        <p class="trial-notice">加入的是試排課，非正式選課</p>
+      </div>
+
+      <div id="resultTools" class="result-tools" hidden>
+        <label class="quick-search">結果內模糊搜尋<input id="searchText" type="search" placeholder="支援部分文字與少量錯字"></label>
+        <label>名額<select id="availability"><option value="all">全部</option><option value="available">尚有名額</option><option value="approval">開放加簽</option></select></label>
+        <label>排序<select id="sortBy"><option value="courseCode">課程流水號</option><option value="name">課程名稱</option><option value="availability">剩餘名額</option><option value="credits">學分</option></select></label>
+      </div>
+
+      <div id="statusBox" class="status-box" aria-live="polite">
+        所有官方查詢條件都集中在左側，不需要再切換不同頁面。
+      </div>
+      <div id="courseResults" class="course-results"></div>
+    </section>
+  </main>
+
+  <iframe id="officialQueryBridge" title="北大官方課程查詢連線" hidden></iframe>
+  <script src="course-query-transport.js"></script>
+  <script src="course-query-core.js"></script>
+  <script src="planner-core.js"></script>
+  <script src="planner-storage.js"></script>
+  <script src="search.js?v=1.3.2"></script>
+</body>
+</html>

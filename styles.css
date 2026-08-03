@@ -261,6 +261,65 @@ a:hover {
   line-height: 1.4;
 }
 
+.trial-planner-toolbar {
+  margin: 12px 16px 0;
+  padding: 10px 12px;
+  border: 1px solid #e4b84d;
+  border-radius: 8px;
+  background: #fff8db;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #5f4700;
+  font-family: "Noto Sans TC", sans-serif;
+}
+
+.trial-course-action {
+  margin-top: 4px;
+}
+
+.trial-toolbar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.trial-add-button,
+.trial-view-button {
+  border: 0;
+  border-radius: 7px;
+  padding: 8px 12px;
+  color: #ffffff;
+  background: #175ea8;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.trial-add-button:hover,
+.trial-view-button:hover {
+  background: #0f4d8d;
+}
+
+.trial-add-button:focus-visible,
+.trial-view-button:focus-visible {
+  outline: 3px solid #84bfff;
+  outline-offset: 2px;
+}
+
+.trial-add-button.is-added,
+.trial-add-button:disabled {
+  color: #315c3b;
+  background: #d9f0df;
+  cursor: default;
+}
+
+.trial-view-button.secondary {
+  color: #175ea8;
+  background: #dceaf6;
+}
+
 .course-link {
   text-decoration: underline;
 }

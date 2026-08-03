@@ -1,0 +1,282 @@
+:root {
+  color: #17202a;
+  background: #f4f6f8;
+  font-family: system-ui, "Noto Sans TC", sans-serif;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+.planner-page {
+  width: min(1440px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 32px 0 56px;
+}
+
+.planner-header,
+.section-heading,
+.semester-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+.eyebrow {
+  margin-bottom: 4px;
+  color: #54708a;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.trial-warning {
+  margin: 0;
+  padding: 10px 14px;
+  border: 1px solid #e5b63d;
+  border-radius: 8px;
+  color: #604700;
+  background: #fff6ce;
+  font-weight: 800;
+}
+
+.planner-section {
+  margin-top: 20px;
+  padding: 22px;
+  border: 1px solid #dfe5eb;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(31, 51, 73, 0.05);
+}
+
+.planner-section h2 {
+  margin-bottom: 4px;
+  font-size: 1.15rem;
+}
+
+.planner-section p {
+  margin-bottom: 0;
+  color: #5f6f7e;
+}
+
+.semester-form {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.semester-form label {
+  display: grid;
+  gap: 5px;
+  color: #475869;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.semester-form input,
+.semester-form select {
+  min-height: 38px;
+  border: 1px solid #b8c4cf;
+  border-radius: 7px;
+  padding: 7px 9px;
+  color: #17202a;
+  background: #ffffff;
+}
+
+.semester-form input {
+  width: 100px;
+}
+
+.primary-button,
+.secondary-button,
+.remove-button {
+  min-height: 38px;
+  border: 0;
+  border-radius: 7px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.primary-button,
+.secondary-button {
+  color: #ffffff;
+  background: #175ea8;
+}
+
+.primary-button:hover,
+.secondary-button:hover {
+  background: #0f4d8d;
+}
+
+.table-scroll {
+  margin-top: 16px;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid #d9e0e7;
+  padding: 9px;
+  text-align: left;
+  vertical-align: top;
+}
+
+thead th,
+tbody th {
+  color: #34485b;
+  background: #eef3f7;
+  white-space: nowrap;
+}
+
+.timetable {
+  min-width: 900px;
+  table-layout: fixed;
+}
+
+.timetable th:first-child {
+  width: 58px;
+  text-align: center;
+}
+
+.timetable td {
+  height: 62px;
+  padding: 5px;
+}
+
+.timetable-course {
+  display: grid;
+  gap: 2px;
+  margin: 2px 0;
+  padding: 6px;
+  border-radius: 6px;
+  background: #dfeeff;
+  font-size: 0.78rem;
+}
+
+.timetable-course span {
+  color: #4d6173;
+}
+
+.timetable td.has-conflict {
+  background: #fff0f0;
+  box-shadow: inset 0 0 0 2px #ce4242;
+}
+
+.conflict-summary {
+  color: #386b48;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.conflict-summary.has-conflict {
+  color: #ad2929;
+}
+
+.course-list {
+  min-width: 850px;
+}
+
+.course-list a {
+  color: #175ea8;
+  font-weight: 700;
+}
+
+.remove-button {
+  min-height: 32px;
+  padding: 5px 10px;
+  color: #a31d1d;
+  background: #ffe3e3;
+}
+
+.remove-button:hover {
+  color: #ffffff;
+  background: #b92e2e;
+}
+
+.empty-state {
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: 8px;
+  background: #f3f6f8;
+}
+
+.popup-page {
+  min-width: 350px;
+  background: #ffffff;
+}
+
+.popup-panel {
+  padding: 18px;
+}
+
+.popup-panel h1 {
+  margin-bottom: 12px;
+  font-size: 1.25rem;
+}
+
+.popup-panel .trial-warning {
+  margin-bottom: 16px;
+}
+
+.popup-panel .semester-form {
+  align-items: end;
+}
+
+.semester-summary {
+  margin: 14px 0;
+  color: #44596c;
+}
+
+.popup-panel .primary-button {
+  width: 100%;
+}
+
+.popup-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.popup-actions .secondary-button {
+  width: 100%;
+  color: #175ea8;
+  background: #e5f0fa;
+}
+
+@media (max-width: 700px) {
+  .planner-header,
+  .section-heading,
+  .semester-section {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .trial-warning {
+    align-self: stretch;
+  }
+}

@@ -1,14 +1,22 @@
 {
   "manifest_version": 3,
   "name": "NTPU Course Layout Optimizer",
-  "version": "1.0.0",
-  "description": "優化北大課程查詢網站的版面與表格可讀性。",
+  "version": "1.3.2",
+  "description": "提供新版北大課程查詢、統一篩選與分學期試排課功能。",
   "permissions": ["storage","activeTab"],
+  "host_permissions": ["https://sea.cc.ntpu.edu.tw/*"],
+  "action": {
+    "default_title": "NTPU 試排課",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
   "options_page": "options.html",
   "content_scripts": [
     {
       "matches": ["*://sea.cc.ntpu.edu.tw/pls/dev_stud/*"],
-      "js": ["content.js"],
+      "js": ["course-query-transport.js", "planner-core.js", "planner-storage.js", "content.js"],
       "css": ["styles.css"],
       "run_at": "document_idle",
       "all_frames": true

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NTPU 試排課結果</title>
+  <link rel="stylesheet" href="planner-ui.css">
+</head>
+<body>
+  <main class="planner-page">
+    <header class="planner-header">
+      <div>
+        <p class="eyebrow">NTPU Course Layout Optimizer</p>
+        <h1>試排課結果</h1>
+      </div>
+      <p class="trial-warning" role="note">只是試排課，非正式課表</p>
+    </header>
+
+    <section class="planner-section semester-section" aria-labelledby="semesterTitle">
+      <div>
+        <h2 id="semesterTitle">選擇試排學期</h2>
+        <p>不同學期的試排課會分開保存。</p>
+      </div>
+      <form id="semesterForm" class="semester-form">
+        <label>
+          學年度
+          <input id="academicYear" type="number" min="1" max="999" required>
+        </label>
+        <label>
+          學期
+          <select id="term">
+            <option value="1">第 1 學期</option>
+            <option value="2">第 2 學期</option>
+          </select>
+        </label>
+        <button type="submit" class="secondary-button">檢視此學期</button>
+      </form>
+    </section>
+
+    <section class="planner-section" aria-labelledby="timetableTitle">
+      <div class="section-heading">
+        <div>
+          <h2 id="timetableTitle">週間課表</h2>
+          <p id="semesterSummary" aria-live="polite"></p>
+        </div>
+        <span id="conflictSummary" class="conflict-summary"></span>
+      </div>
+      <div class="table-scroll">
+        <table class="timetable">
+          <thead>
+            <tr>
+              <th scope="col">節次</th>
+              <th scope="col">一</th>
+              <th scope="col">二</th>
+              <th scope="col">三</th>
+              <th scope="col">四</th>
+              <th scope="col">五</th>
+              <th scope="col">六</th>
+              <th scope="col">日</th>
+            </tr>
+          </thead>
+          <tbody id="timetableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="planner-section" aria-labelledby="courseListTitle">
+      <h2 id="courseListTitle">已選課程</h2>
+      <p id="emptyState" class="empty-state" hidden>
+        這個學期還沒有試排課程。請回到北大課程查詢結果，按課程卡上的新增按鈕。
+      </p>
+      <div id="courseTableWrapper" class="table-scroll">
+        <table class="course-list">
+          <thead>
+            <tr>
+              <th scope="col">課程流水號</th>
+              <th scope="col">課程</th>
+              <th scope="col">教師</th>
+              <th scope="col">學分</th>
+              <th scope="col">時間與地點</th>
+              <th scope="col">操作</th>
+            </tr>
+          </thead>
+          <tbody id="courseListBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="planner-core.js"></script>
+  <script src="planner-storage.js"></script>
+  <script src="planner.js"></script>
+</body>
+</html>

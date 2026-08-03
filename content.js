@@ -1,5 +1,43 @@
 // content.js
 
+function installOfficialQueryBridge() {
+  if (window.top === window) return;
+
+  window.addEventListener("message", async (event) => {
+    const message = event.data;
+    if (event.source !== window.parent) return;
+    if (message?.type !== "ntpu-official-course-query") return;
+    if (message.extensionId !== chrome.runtime.id) return;
+
+    const response = {
+      type: "ntpu-official-course-query-result",
+      extensionId: chrome.runtime.id,
+      requestId: message.requestId,
+    };
+    try {
+      const request = NTPUCourseQueryTransport.buildOfficialQueryRequest(message.query);
+      const officialResponse = await fetch(request.url, {
+        method: request.method,
+        credentials: "include",
+        headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+        body: request.body,
+      });
+      if (!officialResponse.ok) {
+        throw new Error(`北大查詢系統回傳 ${officialResponse.status}`);
+      }
+      const bytes = await officialResponse.arrayBuffer();
+      response.ok = true;
+      response.html = new TextDecoder("big5").decode(bytes);
+    } catch (error) {
+      response.ok = false;
+      response.error = error.message;
+    }
+    window.parent.postMessage(response, event.origin);
+  });
+}
+
+installOfficialQueryBridge();
+
 /**
  * 等待某個 selector 的元素出現
  * @param {string} selector CSS 選擇器
@@ -189,8 +227,10 @@ function transformTableToCards(tableEl) {
         </div>
       `;
     };
-    if (parseInt(approvedTotal) >= parseInt(limitTotal)) cardColor = "red" 
-    else cardColor="typical"
+    const cardColor =
+      parseInt(approvedTotal, 10) >= parseInt(limitTotal, 10)
+        ? "red"
+        : "typical";
     const countsHTML = `<div class="info-card-container">
         ${statCard("限修", limitTotal, cardColor)}
         ${statCard("已核准", approvedTotal, cardColor)}
@@ -200,10 +240,6 @@ function transformTableToCards(tableEl) {
         </div>
     `;
 
-
-    // 供排序用的欄位（都存成容易比較的值）
-    const year = Number(cols[1]?.innerText.trim()) || 0;
-    const term = Number(cols[2]?.innerText.trim()) || 0;
 
     const card = document.createElement("div");
     card.dataset.credit = String(Number(courseCredit) || 0);
@@ -257,6 +293,23 @@ function transformTableToCards(tableEl) {
         </div>
       </div>
     `;
+    const trialCourse = {
+      academicYear: cols[1]?.innerText.trim() || "",
+      term: cols[2]?.innerText.trim() || "",
+      serialNumber: courseNo,
+      courseCode,
+      name: courseName,
+      teacher: Array.from(teacher || [])
+        .map((item) => item.innerText.trim())
+        .join("、"),
+      credits: courseCredit,
+      timePlace,
+      owner: courseOwner,
+      detailUrl: linkEls[0]?.href || "",
+    };
+    card.querySelector(".course-right").appendChild(
+      createTrialCourseAction(trialCourse)
+    );
     container.appendChild(card);
   });
 
@@ -265,7 +318,100 @@ function transformTableToCards(tableEl) {
 const sorter = sortableTable();
 tableEl.parentNode.insertBefore(sorter, container);
 attachCardSorter(sorter, container);
+const plannerToolbar = createTrialPlannerToolbar();
+tableEl.parentNode.insertBefore(plannerToolbar, sorter);
 
+}
+
+const trialCourseButtons = new Map();
+
+chrome.storage.onChanged?.addListener((changes, areaName) => {
+  if (areaName !== "local" || !Object.hasOwn(changes, "ntpuTrialSchedules")) {
+    return;
+  }
+  const schedules = changes.ntpuTrialSchedules.newValue || {};
+  trialCourseButtons.forEach(({ button, course, defaultLabel, semesterId }) => {
+    const exists = (schedules[semesterId] || []).some(
+      (storedCourse) => NTPUPlannerCore.isSameCourse(storedCourse, course)
+    );
+    setTrialCourseButtonState(button, defaultLabel, exists);
+  });
+});
+
+function createTrialCourseAction(course) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "trial-course-action";
+
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "trial-add-button";
+  const defaultLabel = `新增至 ${course.academicYear}-${course.term} 試排`;
+  button.textContent = defaultLabel;
+  wrapper.appendChild(button);
+
+  const semesterId = `${course.academicYear}-${course.term}`;
+  const courseId = NTPUPlannerCore.createCourseId(course);
+  trialCourseButtons.set(courseId, { button, course, defaultLabel, semesterId });
+
+  button.addEventListener("click", async () => {
+    button.disabled = true;
+    try {
+      await NTPUPlannerStorage.addCourse(course);
+      setTrialCourseButtonState(button, defaultLabel, true);
+    } catch (error) {
+      button.disabled = false;
+      button.textContent = "新增失敗，請重試";
+      console.error("無法新增試排課", error);
+    }
+  });
+
+  NTPUPlannerStorage.loadSchedules()
+    .then((schedules) => {
+      const exists = (schedules[semesterId] || []).some(
+        (item) => NTPUPlannerCore.isSameCourse(item, course)
+      );
+      setTrialCourseButtonState(button, defaultLabel, exists);
+    })
+    .catch((error) => console.error("無法讀取試排課", error));
+
+  return wrapper;
+}
+
+function setTrialCourseButtonState(button, defaultLabel, exists) {
+  button.disabled = exists;
+  button.textContent = exists ? "已加入試排課" : defaultLabel;
+  button.classList.toggle("is-added", exists);
+}
+
+function createTrialPlannerToolbar() {
+  const toolbar = document.createElement("section");
+  toolbar.className = "trial-planner-toolbar";
+
+  const message = document.createElement("strong");
+  message.textContent = "只是試排課，非正式課表";
+
+  const actions = document.createElement("div");
+  actions.className = "trial-toolbar-actions";
+
+  const searchButton = document.createElement("button");
+  searchButton.type = "button";
+  searchButton.className = "trial-view-button";
+  searchButton.textContent = "使用新版課程查詢";
+  searchButton.addEventListener("click", () => {
+    chrome.runtime.sendMessage({ type: "open-course-search" });
+  });
+
+  const plannerButton = document.createElement("button");
+  plannerButton.type = "button";
+  plannerButton.className = "trial-view-button secondary";
+  plannerButton.textContent = "檢視試排課結果";
+  plannerButton.addEventListener("click", () => {
+    chrome.runtime.sendMessage({ type: "open-trial-planner" });
+  });
+
+  actions.append(searchButton, plannerButton);
+  toolbar.append(message, actions);
+  return toolbar;
 }
 
 function sortableTable() {

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NTPU 試排課</title>
+  <link rel="stylesheet" href="planner-ui.css">
+</head>
+<body class="popup-page">
+  <main class="popup-panel">
+    <h1>NTPU 試排課</h1>
+    <p class="trial-warning" role="note">只是試排課，非正式課表</p>
+
+    <form id="semesterForm" class="semester-form">
+      <label>
+        學年度
+        <input id="academicYear" type="number" min="1" max="999" required>
+      </label>
+      <label>
+        學期
+        <select id="term">
+          <option value="1">第 1 學期</option>
+          <option value="2">第 2 學期</option>
+        </select>
+      </label>
+      <button type="submit" class="secondary-button">選擇學期</button>
+    </form>
+
+    <p id="summary" class="semester-summary" aria-live="polite"></p>
+    <div class="popup-actions">
+      <button id="openSearch" type="button" class="primary-button">
+        新版課程查詢
+      </button>
+      <button id="viewPlanner" type="button" class="secondary-button">
+        檢視試排課結果
+      </button>
+    </div>
+  </main>
+
+  <script src="planner-core.js"></script>
+  <script src="planner-storage.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
